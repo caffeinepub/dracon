@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useTheme } from "../context/ThemeContext";
 
 const sections = [
   {
@@ -39,10 +40,12 @@ const sections = [
 ];
 
 export default function Privacy() {
+  const { theme } = useTheme();
+
   return (
     <div
       style={{
-        backgroundColor: "#0A0D0B",
+        backgroundColor: "#191919",
         minHeight: "100vh",
         paddingTop: "100px",
       }}
@@ -56,17 +59,17 @@ export default function Privacy() {
         >
           <p
             className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: "#00FF66" }}
+            style={{ color: theme.accent }}
           >
             Legal
           </p>
           <h1
-            className="font-black text-4xl md:text-6xl uppercase tracking-tight mb-4"
-            style={{ color: "#F2F6F3" }}
+            className="font-black text-4xl md:text-6xl tracking-tight mb-4"
+            style={{ color: "#F0F0F0" }}
           >
             Privacy Policy
           </h1>
-          <p style={{ color: "#A9B7AE" }}>Last updated: March 2026</p>
+          <p style={{ color: "#9a9a9a" }}>Last updated: March 2026</p>
         </motion.div>
 
         <motion.div
@@ -75,11 +78,11 @@ export default function Privacy() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="p-4 rounded-xl mb-10"
           style={{
-            background: "rgba(0,255,102,0.06)",
-            border: "1px solid rgba(0,255,102,0.2)",
+            background: `rgba(${theme.rgb},0.05)`,
+            border: `1px solid rgba(${theme.rgb},0.15)`,
           }}
         >
-          <p className="text-sm" style={{ color: "#A9B7AE" }}>
+          <p className="text-sm" style={{ color: "#9a9a9a" }}>
             Your privacy is important to us. This policy explains how Dracon
             collects, uses, and protects your data when you use our service.
           </p>
@@ -96,13 +99,13 @@ export default function Privacy() {
             >
               <h2
                 className="font-bold text-lg mb-3"
-                style={{ color: "#00FF66" }}
+                style={{ color: theme.accent }}
               >
                 {section.title}
               </h2>
               <p
                 className="text-sm leading-relaxed whitespace-pre-line"
-                style={{ color: "#A9B7AE" }}
+                style={{ color: "#9a9a9a" }}
               >
                 {section.content}
               </p>

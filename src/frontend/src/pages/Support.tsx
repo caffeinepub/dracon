@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { SiDiscord } from "react-icons/si";
+import { useTheme } from "../context/ThemeContext";
 
 const faqs = [
   {
@@ -32,6 +33,7 @@ const faqs = [
 
 function FAQ({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
   const [open, setOpen] = useState(false);
+  const { theme } = useTheme();
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -44,18 +46,20 @@ function FAQ({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
         onClick={() => setOpen(!open)}
         className="w-full text-left p-5 rounded-xl transition-all duration-200 flex items-start justify-between gap-4"
         style={{
-          background: open ? "rgba(20,24,22,0.8)" : "rgba(20,24,22,0.5)",
-          border: `1px solid ${open ? "rgba(0,255,102,0.25)" : "rgba(120,255,200,0.1)"}`,
+          background: open ? "rgba(34,34,34,0.8)" : "rgba(34,34,34,0.5)",
+          border: `1px solid ${
+            open ? `rgba(${theme.rgb},0.25)` : "rgba(255,255,255,0.07)"
+          }`,
         }}
         data-ocid={`support.item.${index + 1}`}
       >
-        <span className="font-semibold text-sm" style={{ color: "#F2F6F3" }}>
+        <span className="font-semibold text-sm" style={{ color: "#F0F0F0" }}>
           {faq.q}
         </span>
         <ChevronDown
           size={16}
           style={{
-            color: "#00FF66",
+            color: theme.accent,
             flexShrink: 0,
             transform: open ? "rotate(180deg)" : "rotate(0deg)",
             transition: "transform 0.2s ease",
@@ -75,9 +79,9 @@ function FAQ({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
             <div
               className="px-5 pt-3 pb-5 text-sm leading-relaxed"
               style={{
-                color: "#A9B7AE",
-                background: "rgba(14,20,17,0.4)",
-                borderLeft: "2px solid rgba(0,255,102,0.3)",
+                color: "#9a9a9a",
+                background: "rgba(25,25,25,0.4)",
+                borderLeft: `2px solid rgba(${theme.rgb},0.3)`,
                 borderBottomLeftRadius: "12px",
                 borderBottomRightRadius: "12px",
               }}
@@ -92,10 +96,12 @@ function FAQ({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
 }
 
 export default function Support() {
+  const { theme } = useTheme();
+
   return (
     <div
       style={{
-        backgroundColor: "#0A0D0B",
+        backgroundColor: "#191919",
         minHeight: "100vh",
         paddingTop: "100px",
       }}
@@ -109,17 +115,17 @@ export default function Support() {
         >
           <p
             className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: "#00FF66" }}
+            style={{ color: theme.accent }}
           >
             Help Center
           </p>
           <h1
-            className="font-black text-4xl md:text-6xl uppercase tracking-tight mb-4"
-            style={{ color: "#F2F6F3" }}
+            className="font-black text-4xl md:text-6xl tracking-tight mb-4"
+            style={{ color: "#F0F0F0" }}
           >
             Support
           </h1>
-          <p style={{ color: "#A9B7AE" }}>
+          <p style={{ color: "#9a9a9a" }}>
             Get help from our team or browse common questions.
           </p>
         </motion.div>
@@ -131,10 +137,9 @@ export default function Support() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-12 p-8 rounded-2xl text-center"
           style={{
-            background:
-              "linear-gradient(135deg, rgba(88,101,242,0.15) 0%, rgba(0,255,102,0.08) 100%)",
-            border: "1px solid rgba(120,255,200,0.15)",
-            boxShadow: "0 0 40px rgba(0,255,102,0.06)",
+            background: `linear-gradient(135deg, rgba(88,101,242,0.12) 0%, rgba(${theme.rgb},0.06) 100%)`,
+            border: `1px solid rgba(${theme.rgb},0.12)`,
+            boxShadow: `0 0 40px rgba(${theme.rgb},0.05)`,
           }}
         >
           <SiDiscord
@@ -142,10 +147,10 @@ export default function Support() {
             className="mx-auto mb-4"
             style={{ color: "#5865F2" }}
           />
-          <h2 className="font-bold text-xl mb-2" style={{ color: "#F2F6F3" }}>
+          <h2 className="font-bold text-xl mb-2" style={{ color: "#F0F0F0" }}>
             Join our Discord Server
           </h2>
-          <p className="text-sm mb-6" style={{ color: "#A9B7AE" }}>
+          <p className="text-sm mb-6" style={{ color: "#9a9a9a" }}>
             Get real-time help from the Dracon team and community. We typically
             respond within minutes.
           </p>
@@ -187,7 +192,7 @@ export default function Support() {
         >
           <h2
             className="font-bold text-lg uppercase tracking-wider mb-6"
-            style={{ color: "#F2F6F3" }}
+            style={{ color: "#F0F0F0" }}
           >
             Frequently Asked Questions
           </h2>

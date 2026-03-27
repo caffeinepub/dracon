@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
 import { motion } from "motion/react";
+import { useTheme } from "../context/ThemeContext";
 
 const partners = [
   {
@@ -48,15 +49,17 @@ const partners = [
       "Advanced backup and restore solution for Discord servers of all sizes.",
     category: "Utility",
     website: "https://vaultbot.example.com",
-    color: "#00FF66",
+    color: "#9B8EF0",
   },
 ];
 
 export default function Partners() {
+  const { theme } = useTheme();
+
   return (
     <div
       style={{
-        backgroundColor: "#0A0D0B",
+        backgroundColor: "#191919",
         minHeight: "100vh",
         paddingTop: "100px",
       }}
@@ -70,17 +73,17 @@ export default function Partners() {
         >
           <p
             className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: "#00FF66" }}
+            style={{ color: theme.accent }}
           >
             Ecosystem
           </p>
           <h1
-            className="font-black text-4xl md:text-6xl uppercase tracking-tight mb-4"
-            style={{ color: "#F2F6F3" }}
+            className="font-black text-4xl md:text-6xl tracking-tight mb-4"
+            style={{ color: "#F0F0F0" }}
           >
             Partners
           </h1>
-          <p className="max-w-xl mx-auto" style={{ color: "#A9B7AE" }}>
+          <p className="max-w-xl mx-auto" style={{ color: "#9a9a9a" }}>
             Dracon works alongside the best tools in the Discord ecosystem. Meet
             our trusted partners.
           </p>
@@ -97,9 +100,9 @@ export default function Partners() {
               whileHover={{ y: -6, transition: { duration: 0.2 } }}
               className="p-6 rounded-2xl group"
               style={{
-                background: "rgba(20,24,22,0.65)",
+                background: "rgba(34,34,34,0.65)",
                 backdropFilter: "blur(12px)",
-                border: "1px solid rgba(120,255,200,0.1)",
+                border: "1px solid rgba(255,255,255,0.06)",
                 boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
               }}
               onMouseEnter={(e) => {
@@ -112,7 +115,7 @@ export default function Partners() {
                 (e.currentTarget as HTMLElement).style.boxShadow =
                   "0 4px 24px rgba(0,0,0,0.3)";
                 (e.currentTarget as HTMLElement).style.borderColor =
-                  "rgba(120,255,200,0.1)";
+                  "rgba(255,255,255,0.06)";
               }}
               data-ocid={`partners.item.${i + 1}`}
             >
@@ -128,7 +131,7 @@ export default function Partners() {
                   {partner.name[0]}
                 </div>
                 <span
-                  className="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"
+                  className="text-xs font-semibold px-2.5 py-1 rounded-full"
                   style={{
                     background: `${partner.color}18`,
                     color: partner.color,
@@ -140,13 +143,13 @@ export default function Partners() {
               </div>
               <h3
                 className="font-bold text-base mb-2"
-                style={{ color: "#F2F6F3" }}
+                style={{ color: "#F0F0F0" }}
               >
                 {partner.name}
               </h3>
               <p
                 className="text-sm leading-relaxed mb-5"
-                style={{ color: "#A9B7AE" }}
+                style={{ color: "#9a9a9a" }}
               >
                 {partner.description}
               </p>
@@ -177,20 +180,20 @@ export default function Partners() {
           transition={{ duration: 0.6 }}
           className="text-center p-12 rounded-2xl"
           style={{
-            background: "rgba(20,24,22,0.5)",
-            border: "1px solid rgba(120,255,200,0.12)",
-            boxShadow: "0 0 60px rgba(0,255,102,0.05)",
+            background: "rgba(34,34,34,0.5)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            boxShadow: `0 0 60px rgba(${theme.rgb},0.05)`,
           }}
         >
           <h2
-            className="font-black text-2xl md:text-3xl uppercase tracking-tight mb-3"
-            style={{ color: "#F2F6F3" }}
+            className="font-black text-2xl md:text-3xl tracking-tight mb-3"
+            style={{ color: "#F0F0F0" }}
           >
             Become a Partner
           </h2>
           <p
             className="text-sm max-w-md mx-auto mb-6"
-            style={{ color: "#A9B7AE" }}
+            style={{ color: "#9a9a9a" }}
           >
             Are you building something great for the Discord community? We'd
             love to partner with you.
@@ -201,21 +204,21 @@ export default function Partners() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-sm transition-all duration-200"
             style={{
-              background: "#00FF66",
-              color: "#0A0D0B",
-              boxShadow: "0 0 20px rgba(0,255,102,0.4)",
+              background: theme.accent,
+              color: "#111111",
+              boxShadow: `0 0 20px rgba(${theme.rgb},0.4)`,
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.transform =
                 "translateY(-2px)";
               (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 0 30px rgba(0,255,102,0.6)";
+                `0 0 30px rgba(${theme.rgb},0.6)`;
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.transform =
                 "translateY(0)";
               (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 0 20px rgba(0,255,102,0.4)";
+                `0 0 20px rgba(${theme.rgb},0.4)`;
             }}
             data-ocid="partners.primary_button"
           >

@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { useTheme } from "../context/ThemeContext";
 
 const commandCategories = [
   {
@@ -24,7 +25,7 @@ const commandCategories = [
   },
   {
     name: "Antinuke",
-    color: "#00FF66",
+    color: "#9B8EF0",
     commands: [
       {
         name: "/antinuke enable",
@@ -116,6 +117,7 @@ const commandCategories = [
 
 export default function Commands() {
   const [search, setSearch] = useState("");
+  const { theme } = useTheme();
 
   const filtered = commandCategories
     .map((cat) => ({
@@ -131,7 +133,7 @@ export default function Commands() {
   return (
     <div
       style={{
-        backgroundColor: "#0A0D0B",
+        backgroundColor: "#191919",
         minHeight: "100vh",
         paddingTop: "100px",
       }}
@@ -145,17 +147,17 @@ export default function Commands() {
         >
           <p
             className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: "#00FF66" }}
+            style={{ color: theme.accent }}
           >
             Reference
           </p>
           <h1
-            className="font-black text-4xl md:text-6xl uppercase tracking-tight mb-4"
-            style={{ color: "#F2F6F3" }}
+            className="font-black text-4xl md:text-6xl tracking-tight mb-4"
+            style={{ color: "#F0F0F0" }}
           >
             Commands
           </h1>
-          <p style={{ color: "#A9B7AE" }}>
+          <p style={{ color: "#9a9a9a" }}>
             Complete list of all Dracon slash commands.
           </p>
         </motion.div>
@@ -170,7 +172,7 @@ export default function Commands() {
           <Search
             size={16}
             className="absolute left-4 top-1/2 -translate-y-1/2"
-            style={{ color: "#A9B7AE" }}
+            style={{ color: "#9a9a9a" }}
           />
           <input
             type="text"
@@ -179,19 +181,19 @@ export default function Commands() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-11 pr-4 py-3 rounded-xl text-sm outline-none transition-all duration-200"
             style={{
-              background: "rgba(20,24,22,0.65)",
-              border: "1px solid rgba(120,255,200,0.12)",
-              color: "#F2F6F3",
+              background: "rgba(34,34,34,0.65)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#F0F0F0",
             }}
             onFocus={(e) => {
               (e.currentTarget as HTMLElement).style.borderColor =
-                "rgba(0,255,102,0.4)";
+                `rgba(${theme.rgb},0.4)`;
               (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 0 0 2px rgba(0,255,102,0.1)";
+                `0 0 0 2px rgba(${theme.rgb},0.1)`;
             }}
             onBlur={(e) => {
               (e.currentTarget as HTMLElement).style.borderColor =
-                "rgba(120,255,200,0.12)";
+                "rgba(255,255,255,0.08)";
               (e.currentTarget as HTMLElement).style.boxShadow = "none";
             }}
             data-ocid="commands.search_input"
@@ -221,7 +223,7 @@ export default function Commands() {
                 </h2>
                 <div
                   className="flex-1 h-px"
-                  style={{ background: "rgba(120,255,200,0.08)" }}
+                  style={{ background: "rgba(255,255,255,0.06)" }}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -230,30 +232,30 @@ export default function Commands() {
                     key={cmd.name}
                     className="p-4 rounded-xl transition-all duration-200"
                     style={{
-                      background: "rgba(20,24,22,0.5)",
-                      border: "1px solid rgba(120,255,200,0.08)",
+                      background: "rgba(34,34,34,0.5)",
+                      border: "1px solid rgba(255,255,255,0.06)",
                     }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.borderColor =
-                        "rgba(0,255,102,0.2)";
+                        `rgba(${theme.rgb},0.2)`;
                       (e.currentTarget as HTMLElement).style.background =
-                        "rgba(20,24,22,0.8)";
+                        "rgba(34,34,34,0.8)";
                     }}
                     onMouseLeave={(e) => {
                       (e.currentTarget as HTMLElement).style.borderColor =
-                        "rgba(120,255,200,0.08)";
+                        "rgba(255,255,255,0.06)";
                       (e.currentTarget as HTMLElement).style.background =
-                        "rgba(20,24,22,0.5)";
+                        "rgba(34,34,34,0.5)";
                     }}
                     data-ocid={`commands.item.${ci * 10 + i + 1}`}
                   >
                     <code
                       className="text-sm font-bold font-mono block mb-1"
-                      style={{ color: "#00FF66" }}
+                      style={{ color: cat.color }}
                     >
                       {cmd.name}
                     </code>
-                    <p className="text-xs" style={{ color: "#A9B7AE" }}>
+                    <p className="text-xs" style={{ color: "#9a9a9a" }}>
                       {cmd.description}
                     </p>
                   </div>
@@ -264,7 +266,7 @@ export default function Commands() {
 
           {filtered.length === 0 && (
             <div className="text-center py-16" data-ocid="commands.empty_state">
-              <p style={{ color: "#A9B7AE" }}>
+              <p style={{ color: "#9a9a9a" }}>
                 No commands found matching "{search}"
               </p>
             </div>

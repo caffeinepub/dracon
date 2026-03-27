@@ -9,6 +9,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import { ThemeProvider } from "./context/ThemeContext";
 import Commands from "./pages/Commands";
 import Home from "./pages/Home";
 import Partners from "./pages/Partners";
@@ -25,7 +26,7 @@ function RootLayout() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#0A0D0B",
+        backgroundColor: "#191919",
         display: "flex",
         flexDirection: "column",
       }}
@@ -108,5 +109,9 @@ declare module "@tanstack/react-router" {
 }
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }

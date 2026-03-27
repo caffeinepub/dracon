@@ -2,9 +2,10 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { ChevronDown, Menu, X, Zap } from "lucide-react";
 import type { Transition } from "motion/react";
 import { AnimatePresence, type Variants, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { type ThemeKey, useTheme } from "../context/ThemeContext";
 
 const EASE: Transition["ease"] = [0.16, 1, 0.3, 1] as const;
-import { useEffect, useRef, useState } from "react";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -49,12 +50,189 @@ const mobileItemVariants: Variants = {
   },
 };
 
+const THEME_OPTIONS: { key: ThemeKey; label: string; color: string }[] = [
+  { key: "red", label: "Red", color: "#FF2244" },
+  { key: "cyan", label: "Cyan", color: "#00EEFF" },
+  { key: "yellow", label: "Yellow", color: "#FFDD00" },
+];
+
+function ThemePicker({ inline = false }: { inline?: boolean }) {
+  const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  if (inline) {
+    // Flat inline version for mobile
+    return (
+      <div
+        className="flex items-center gap-2 px-4 py-2"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+      >
+        <span style={{ fontSize: 14, marginRight: 4 }}>🎨</span>
+        {THEME_OPTIONS.map((opt) => (
+          <button
+            key={opt.key}
+            type="button"
+            onClick={() => setTheme(opt.key)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+            style={{
+              color: theme.key === opt.key ? opt.color : "#9a9a9a",
+              background:
+                theme.key === opt.key
+                  ? `rgba(${theme.rgb},0.08)`
+                  : "transparent",
+              border:
+                theme.key === opt.key
+                  ? `1px solid rgba(${theme.rgb},0.2)`
+                  : "1px solid transparent",
+              transition: "all 0.2s ease",
+            }}
+            data-ocid="nav.toggle"
+          >
+            <span
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                backgroundColor: opt.color,
+                display: "inline-block",
+                flexShrink: 0,
+              }}
+            />
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <motion.button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        whileTap={{ scale: 0.92 }}
+        className="flex items-center justify-center rounded-lg"
+        style={{
+          fontSize: 16,
+          padding: "4px 8px",
+          background: open
+            ? "rgba(255,255,255,0.08)"
+            : "rgba(255,255,255,0.05)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          cursor: "pointer",
+          lineHeight: 1,
+          transition: "background 0.2s ease",
+          height: 28,
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.background =
+            "rgba(255,255,255,0.09)";
+        }}
+        onMouseLeave={(e) => {
+          if (!open)
+            (e.currentTarget as HTMLElement).style.background =
+              "rgba(255,255,255,0.05)";
+        }}
+        data-ocid="nav.toggle"
+      >
+        🎨
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.96 }}
+            transition={{ duration: 0.22, ease: EASE }}
+            className="absolute top-full right-0 mt-3 w-36 rounded-xl overflow-hidden"
+            style={{
+              background: "rgba(22,22,22,0.97)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              border: `1px solid rgba(${theme.rgb},0.15)`,
+              boxShadow: `0 20px 40px rgba(0,0,0,0.55), 0 0 20px rgba(${theme.rgb},0.08)`,
+              zIndex: 60,
+            }}
+          >
+            <div className="p-2">
+              {THEME_OPTIONS.map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => {
+                    setTheme(opt.key);
+                    setOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium"
+                  style={{
+                    color: theme.key === opt.key ? opt.color : "#9a9a9a",
+                    background:
+                      theme.key === opt.key
+                        ? `rgba(${theme.rgb},0.08)`
+                        : "transparent",
+                    transition: "color 0.2s ease, background 0.2s ease",
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (theme.key !== opt.key) {
+                      (e.currentTarget as HTMLElement).style.color = "#F0F0F0";
+                      (e.currentTarget as HTMLElement).style.background =
+                        "rgba(255,255,255,0.04)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color =
+                      theme.key === opt.key ? opt.color : "#9a9a9a";
+                    (e.currentTarget as HTMLElement).style.background =
+                      theme.key === opt.key
+                        ? `rgba(${theme.rgb},0.08)`
+                        : "transparent";
+                  }}
+                  data-ocid="nav.toggle"
+                >
+                  <span
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      backgroundColor: opt.color,
+                      display: "inline-block",
+                      flexShrink: 0,
+                      boxShadow:
+                        theme.key === opt.key ? `0 0 6px ${opt.color}` : "none",
+                    }}
+                  />
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -88,7 +266,7 @@ export default function Navbar() {
         transition={{ duration: 0.6, ease: EASE, delay: 0.05 }}
         className="mx-auto max-w-6xl flex items-center justify-between px-6 py-3 rounded-2xl glass-nav"
         style={{
-          boxShadow: scrolled ? "0 0 30px rgba(0,255,102,0.08)" : "none",
+          boxShadow: scrolled ? `0 0 30px rgba(${theme.rgb},0.08)` : "none",
           transition: "box-shadow 0.4s ease",
         }}
       >
@@ -100,17 +278,16 @@ export default function Navbar() {
         >
           <span
             className="w-3 h-3 rounded-full animate-pulse-glow"
-            style={{ backgroundColor: "#00FF66", flexShrink: 0 }}
+            style={{ backgroundColor: theme.accent, flexShrink: 0 }}
           />
           <span
-            className="font-black text-xl tracking-widest"
+            className="font-black text-xl"
             style={{
-              color: "#F2F6F3",
-              letterSpacing: "0.15em",
+              color: "#F0F0F0",
               transition: "color 0.2s ease",
             }}
           >
-            DRACON
+            Dracon
           </span>
         </Link>
 
@@ -123,7 +300,7 @@ export default function Navbar() {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-1 text-sm font-medium"
               style={{
-                color: dropdownOpen ? "#00FF66" : "#A9B7AE",
+                color: dropdownOpen ? theme.accent : "#9a9a9a",
                 transition: "color 0.2s ease",
               }}
               data-ocid="nav.dropdown_menu"
@@ -148,12 +325,11 @@ export default function Navbar() {
                   className="absolute top-full left-1/2 mt-3 w-52 rounded-xl overflow-hidden"
                   style={{
                     transform: "translateX(-50%)",
-                    background: "rgba(14, 20, 17, 0.97)",
+                    background: "rgba(22, 22, 22, 0.97)",
                     backdropFilter: "blur(24px)",
                     WebkitBackdropFilter: "blur(24px)",
-                    border: "1px solid rgba(120,255,200,0.15)",
-                    boxShadow:
-                      "0 20px 40px rgba(0,0,0,0.55), 0 0 20px rgba(0,255,102,0.08)",
+                    border: `1px solid rgba(${theme.rgb},0.15)`,
+                    boxShadow: `0 20px 40px rgba(0,0,0,0.55), 0 0 20px rgba(${theme.rgb},0.08)`,
                   }}
                 >
                   <div className="p-2">
@@ -174,7 +350,7 @@ export default function Navbar() {
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium"
                           style={{
-                            color: "#A9B7AE",
+                            color: "#9a9a9a",
                             transition: "color 0.2s ease, background 0.2s ease",
                           }}
                           whileHover={{
@@ -183,13 +359,13 @@ export default function Navbar() {
                           }}
                           onMouseEnter={(e) => {
                             (e.currentTarget as HTMLElement).style.color =
-                              "#00FF66";
+                              theme.accent;
                             (e.currentTarget as HTMLElement).style.background =
-                              "rgba(0,255,102,0.08)";
+                              `rgba(${theme.rgb},0.08)`;
                           }}
                           onMouseLeave={(e) => {
                             (e.currentTarget as HTMLElement).style.color =
-                              "#A9B7AE";
+                              "#9a9a9a";
                             (e.currentTarget as HTMLElement).style.background =
                               "transparent";
                           }}
@@ -217,20 +393,24 @@ export default function Navbar() {
                             className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium"
                             style={{
                               color:
-                                currentPath === link.to ? "#00FF66" : "#A9B7AE",
+                                currentPath === link.to
+                                  ? theme.accent
+                                  : "#9a9a9a",
                               transition:
                                 "color 0.2s ease, background 0.2s ease",
                             }}
                             onMouseEnter={(e) => {
                               (e.currentTarget as HTMLElement).style.color =
-                                "#00FF66";
+                                theme.accent;
                               (
                                 e.currentTarget as HTMLElement
-                              ).style.background = "rgba(0,255,102,0.08)";
+                              ).style.background = `rgba(${theme.rgb},0.08)`;
                             }}
                             onMouseLeave={(e) => {
                               (e.currentTarget as HTMLElement).style.color =
-                                currentPath === link.to ? "#00FF66" : "#A9B7AE";
+                                currentPath === link.to
+                                  ? theme.accent
+                                  : "#9a9a9a";
                               (
                                 e.currentTarget as HTMLElement
                               ).style.background = "transparent";
@@ -252,15 +432,15 @@ export default function Navbar() {
             to="/partners"
             className="text-sm font-medium"
             style={{
-              color: currentPath === "/partners" ? "#00FF66" : "#A9B7AE",
+              color: currentPath === "/partners" ? theme.accent : "#9a9a9a",
               transition: "color 0.25s ease",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.color = "#F2F6F3";
+              (e.currentTarget as HTMLElement).style.color = "#F0F0F0";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.color =
-                currentPath === "/partners" ? "#00FF66" : "#A9B7AE";
+                currentPath === "/partners" ? theme.accent : "#9a9a9a";
             }}
             data-ocid="nav.link"
           >
@@ -271,30 +451,30 @@ export default function Navbar() {
             to="/premium"
             className="text-sm font-semibold px-3 py-1 rounded-full"
             style={{
-              color: "#00FF66",
-              border: "1px solid rgba(0,255,102,0.3)",
+              color: theme.accent,
+              border: `1px solid rgba(${theme.rgb},0.3)`,
               background:
                 currentPath === "/premium"
-                  ? "rgba(0,255,102,0.1)"
+                  ? `rgba(${theme.rgb},0.1)`
                   : "transparent",
               transition:
                 "background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease",
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.background =
-                "rgba(0,255,102,0.1)";
+                `rgba(${theme.rgb},0.1)`;
               (e.currentTarget as HTMLElement).style.borderColor =
-                "rgba(0,255,102,0.6)";
+                `rgba(${theme.rgb},0.6)`;
               (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 0 12px rgba(0,255,102,0.15)";
+                `0 0 12px rgba(${theme.rgb},0.15)`;
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background =
                 currentPath === "/premium"
-                  ? "rgba(0,255,102,0.1)"
+                  ? `rgba(${theme.rgb},0.1)`
                   : "transparent";
               (e.currentTarget as HTMLElement).style.borderColor =
-                "rgba(0,255,102,0.3)";
+                `rgba(${theme.rgb},0.3)`;
               (e.currentTarget as HTMLElement).style.boxShadow = "none";
             }}
             data-ocid="nav.link"
@@ -305,22 +485,21 @@ export default function Navbar() {
 
         {/* Right CTA */}
         <div className="hidden md:flex items-center gap-3">
+          <ThemePicker />
           <motion.a
             href="https://discord.com/oauth2/authorize"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold"
             style={{
-              background: "#00FF66",
-              color: "#0A0D0B",
-              boxShadow:
-                "0 0 20px rgba(0,255,102,0.4), 0 0 40px rgba(0,255,102,0.2)",
-              transition: "box-shadow 0.3s ease",
+              background: theme.accent,
+              color: "#111111",
+              boxShadow: `0 0 20px rgba(${theme.rgb},0.4), 0 0 40px rgba(${theme.rgb},0.2)`,
+              transition: "box-shadow 0.3s ease, background 0.3s ease",
             }}
             whileHover={{
               y: -2,
-              boxShadow:
-                "0 0 30px rgba(0,255,102,0.65), 0 0 60px rgba(0,255,102,0.3)",
+              boxShadow: `0 0 30px rgba(${theme.rgb},0.65), 0 0 60px rgba(${theme.rgb},0.3)`,
               transition: { type: "spring", stiffness: 300, damping: 18 },
             }}
             whileTap={{ scale: 0.96 }}
@@ -335,7 +514,7 @@ export default function Navbar() {
         <motion.button
           type="button"
           className="md:hidden p-2 rounded-lg"
-          style={{ color: "#A9B7AE" }}
+          style={{ color: "#9a9a9a" }}
           onClick={() => setMobileOpen(!mobileOpen)}
           whileTap={{ scale: 0.9 }}
           data-ocid="nav.toggle"
@@ -378,9 +557,9 @@ export default function Navbar() {
             exit="exit"
             className="md:hidden mx-auto max-w-6xl mt-2 rounded-2xl p-4"
             style={{
-              background: "rgba(14, 20, 17, 0.98)",
+              background: "rgba(22, 22, 22, 0.98)",
               backdropFilter: "blur(24px)",
-              border: "1px solid rgba(120,255,200,0.12)",
+              border: `1px solid rgba(${theme.rgb},0.12)`,
               boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
             }}
           >
@@ -396,16 +575,17 @@ export default function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className="px-4 py-3 rounded-xl text-sm font-medium"
                     style={{
-                      color: "#A9B7AE",
+                      color: "#9a9a9a",
                       transition: "color 0.2s ease, background 0.2s ease",
                     }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = "#00FF66";
+                      (e.currentTarget as HTMLElement).style.color =
+                        theme.accent;
                       (e.currentTarget as HTMLElement).style.background =
-                        "rgba(0,255,102,0.06)";
+                        `rgba(${theme.rgb},0.06)`;
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                      (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
                       (e.currentTarget as HTMLElement).style.background =
                         "transparent";
                     }}
@@ -419,12 +599,13 @@ export default function Navbar() {
                       onClick={() => setMobileOpen(false)}
                       className="block px-4 py-3 rounded-xl text-sm font-medium"
                       style={{
-                        color: currentPath === link.to ? "#00FF66" : "#A9B7AE",
+                        color:
+                          currentPath === link.to ? theme.accent : "#9a9a9a",
                         transition: "color 0.2s ease, background 0.2s ease",
                       }}
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLElement).style.background =
-                          "rgba(0,255,102,0.06)";
+                          `rgba(${theme.rgb},0.06)`;
                       }}
                       onMouseLeave={(e) => {
                         (e.currentTarget as HTMLElement).style.background =
@@ -443,7 +624,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="block px-4 py-3 rounded-xl text-sm font-medium"
                   style={{
-                    color: "#A9B7AE",
+                    color: "#9a9a9a",
                     transition: "color 0.2s ease",
                   }}
                   data-ocid="nav.link"
@@ -456,11 +637,14 @@ export default function Navbar() {
                   to="/premium"
                   onClick={() => setMobileOpen(false)}
                   className="block px-4 py-3 rounded-xl text-sm font-semibold"
-                  style={{ color: "#00FF66" }}
+                  style={{ color: theme.accent }}
                   data-ocid="nav.link"
                 >
                   Premium
                 </Link>
+              </motion.div>
+              <motion.div variants={mobileItemVariants}>
+                <ThemePicker inline />
               </motion.div>
               <motion.div variants={mobileItemVariants}>
                 <a
@@ -469,9 +653,9 @@ export default function Navbar() {
                   rel="noopener noreferrer"
                   className="mx-2 mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold"
                   style={{
-                    background: "#00FF66",
-                    color: "#0A0D0B",
-                    boxShadow: "0 0 20px rgba(0,255,102,0.4)",
+                    background: theme.accent,
+                    color: "#111111",
+                    boxShadow: `0 0 20px rgba(${theme.rgb},0.4)`,
                   }}
                   data-ocid="nav.primary_button"
                 >

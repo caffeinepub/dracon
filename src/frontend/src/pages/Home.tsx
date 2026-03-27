@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import {
   Activity,
+  ArrowRight,
   CheckCircle,
   DoorOpen,
   Gavel,
@@ -15,9 +16,10 @@ import {
 } from "lucide-react";
 import type { Transition } from "motion/react";
 import { type Variants, motion } from "motion/react";
+import { useEffect } from "react";
+import { useTheme } from "../context/ThemeContext";
 
 const EASE: Transition["ease"] = [0.16, 1, 0.3, 1] as const;
-import { useEffect } from "react";
 
 const features = [
   {
@@ -91,7 +93,6 @@ const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
   delay: `${i * 0.5}s`,
 }));
 
-// Stagger variants for hero content
 const heroContainer: Variants = {
   hidden: {},
   visible: {
@@ -109,7 +110,6 @@ const heroItem: Variants = {
   },
 };
 
-// Stagger variants for section headings
 const sectionContainer: Variants = {
   hidden: {},
   visible: {
@@ -131,6 +131,7 @@ function FeatureCard({
   index,
 }: { feature: (typeof features)[0]; index: number }) {
   const Icon = feature.icon;
+  const { theme } = useTheme();
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -151,40 +152,43 @@ function FeatureCard({
       }
       whileTap={feature.comingSoon ? {} : { scale: 0.985 }}
       className={`relative p-6 rounded-2xl cursor-default ${
-        feature.comingSoon ? "" : "feature-card"
+        feature.comingSoon ? "" : "feature-card feature-card-highlight"
       }`}
       style={{
-        background: feature.comingSoon ? "transparent" : "rgba(20,24,22,0.65)",
+        background: feature.comingSoon ? "transparent" : "rgba(34,34,34,0.65)",
         backdropFilter: feature.comingSoon ? "none" : "blur(12px)",
         border: feature.comingSoon
-          ? "1px dashed rgba(120,255,200,0.2)"
-          : "1px solid rgba(120,255,200,0.1)",
+          ? `1px dashed rgba(${theme.rgb},0.2)`
+          : "1px solid rgba(255,255,255,0.06)",
         boxShadow: feature.comingSoon ? "none" : "0 4px 24px rgba(0,0,0,0.3)",
         transition:
           "box-shadow 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s cubic-bezier(0.16,1,0.3,1)",
       }}
     >
       <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+        className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
         style={{
           background: feature.comingSoon
-            ? "rgba(120,255,200,0.05)"
-            : "rgba(0,255,102,0.1)",
-          border: "1px solid rgba(0,255,102,0.2)",
+            ? `rgba(${theme.rgb},0.04)`
+            : `rgba(${theme.rgb},0.1)`,
+          border: `1px solid rgba(${theme.rgb},0.2)`,
+          boxShadow: feature.comingSoon
+            ? "none"
+            : "inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.3)",
           transition: "background 0.3s ease, transform 0.3s ease",
         }}
       >
         <Icon
-          size={18}
+          size={19}
           style={{
-            color: feature.comingSoon ? "rgba(0,255,102,0.4)" : "#00FF66",
+            color: feature.comingSoon ? `rgba(${theme.rgb},0.4)` : theme.accent,
           }}
         />
       </div>
       <h3
-        className="text-sm font-bold uppercase tracking-wider mb-2"
+        className="text-sm font-bold mb-2"
         style={{
-          color: feature.comingSoon ? "rgba(242,246,243,0.4)" : "#F2F6F3",
+          color: feature.comingSoon ? "rgba(240,240,240,0.4)" : "#F0F0F0",
         }}
       >
         {feature.title}
@@ -192,7 +196,7 @@ function FeatureCard({
       <p
         className="text-sm leading-relaxed"
         style={{
-          color: feature.comingSoon ? "rgba(169,183,174,0.4)" : "#A9B7AE",
+          color: feature.comingSoon ? "rgba(154,154,154,0.4)" : "#9a9a9a",
         }}
       >
         {feature.description}
@@ -202,31 +206,31 @@ function FeatureCard({
 }
 
 export default function Home() {
+  const { theme } = useTheme();
+
   useEffect(() => {
     document.title = "Dracon — Control Your Server";
   }, []);
 
   return (
-    <div style={{ backgroundColor: "#0A0D0B" }}>
+    <div style={{ backgroundColor: "#191919" }}>
       {/* Hero */}
       <section
-        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24"
+        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 hero-dot-grid"
         style={{ overflow: "hidden" }}
       >
-        {/* Ambient radial glow — slowly pulsing */}
+        {/* Ambient radial glow */}
         <motion.div
           className="absolute inset-0 pointer-events-none"
-          animate={{
-            opacity: [0.7, 1, 0.7],
-          }}
+          animate={{ opacity: [0.7, 1, 0.7] }}
           transition={{
             duration: 8,
             repeat: Number.POSITIVE_INFINITY,
             ease: "easeInOut",
           }}
           style={{
-            background:
-              "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,255,102,0.09) 0%, transparent 70%)",
+            background: `radial-gradient(ellipse 80% 60% at 50% 40%, rgba(${theme.rgb},0.09) 0%, transparent 70%)`,
+            zIndex: 0,
           }}
         />
 
@@ -244,9 +248,9 @@ export default function Home() {
             height: 300,
             left: "15%",
             top: "30%",
-            background:
-              "radial-gradient(circle, rgba(0,255,102,0.06) 0%, transparent 70%)",
+            background: `radial-gradient(circle, rgba(${theme.rgb},0.06) 0%, transparent 70%)`,
             filter: "blur(40px)",
+            zIndex: 0,
           }}
         />
         <motion.div
@@ -263,9 +267,9 @@ export default function Home() {
             height: 250,
             right: "12%",
             top: "20%",
-            background:
-              "radial-gradient(circle, rgba(0,255,102,0.05) 0%, transparent 70%)",
+            background: `radial-gradient(circle, rgba(${theme.rgb},0.05) 0%, transparent 70%)`,
             filter: "blur(50px)",
+            zIndex: 0,
           }}
         />
 
@@ -275,15 +279,16 @@ export default function Home() {
             key={p.id}
             className="absolute w-1 h-1 rounded-full"
             style={{
-              background: "rgba(0,255,102,0.4)",
+              background: `rgba(${theme.rgb},0.4)`,
               left: p.left,
               top: p.top,
               animation: `particle-drift ${p.duration} linear ${p.delay} infinite`,
+              zIndex: 0,
             }}
           />
         ))}
 
-        {/* Hero content — staggered */}
+        {/* Hero content */}
         <motion.div
           variants={heroContainer}
           initial="hidden"
@@ -292,11 +297,11 @@ export default function Home() {
         >
           <motion.div variants={heroItem}>
             <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-8"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 animate-badge-pulse"
               style={{
-                background: "rgba(0,255,102,0.08)",
-                border: "1px solid rgba(0,255,102,0.2)",
-                color: "#00FF66",
+                background: `rgba(${theme.rgb},0.08)`,
+                border: `1px solid rgba(${theme.rgb},0.25)`,
+                color: theme.accent,
               }}
             >
               <motion.span
@@ -307,7 +312,7 @@ export default function Home() {
                   repeat: Number.POSITIVE_INFINITY,
                   ease: "easeInOut",
                 }}
-                style={{ background: "#00FF66" }}
+                style={{ background: theme.accent }}
               />
               Now Available — Free &amp; Premium Plans
             </div>
@@ -315,17 +320,23 @@ export default function Home() {
 
           <motion.h1
             variants={heroItem}
-            className="font-black text-4xl md:text-5xl lg:text-6xl leading-none tracking-tight mb-6 uppercase"
-            style={{ color: "#F2F6F3" }}
+            className="font-black leading-none mb-5"
+            style={{
+              color: "#F0F0F0",
+              fontSize: "clamp(2.5rem, 8vw, 6rem)",
+              letterSpacing: "-0.04em",
+            }}
           >
             Control Your Server
             <br />
             with{" "}
             <span
               style={{
-                color: "#00FF66",
-                textShadow:
-                  "0 0 30px rgba(0,255,102,0.8), 0 0 60px rgba(0,255,102,0.4), 0 0 100px rgba(0,255,102,0.2)",
+                background: `linear-gradient(135deg, ${theme.accent} 0%, #ffffff 80%)`,
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: `drop-shadow(0 0 24px rgba(${theme.rgb},0.6)) drop-shadow(0 0 48px rgba(${theme.rgb},0.3))`,
               }}
             >
               Dracon
@@ -334,10 +345,13 @@ export default function Home() {
 
           <motion.p
             variants={heroItem}
-            className="text-base md:text-lg mb-10 max-w-2xl mx-auto"
-            style={{ color: "#A9B7AE", lineHeight: 1.6 }}
+            className="text-sm md:text-base mb-8 max-w-2xl mx-auto"
+            style={{ color: "#9a9a9a", lineHeight: 1.6 }}
           >
-            Powerful modules. Clean design. Maximum control.
+            The most powerful Discord bot for complete server control. Featuring{" "}
+            <span style={{ color: theme.accent }}>advanced moderation</span>,{" "}
+            <span style={{ color: theme.accent }}>real-time protection</span>,
+            and seamless setup.
           </motion.p>
 
           <motion.div
@@ -348,24 +362,22 @@ export default function Home() {
               href="https://discord.com/oauth2/authorize"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 rounded-xl font-bold text-sm"
+              className="shimmer-btn inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm"
               style={{
-                background: "#00FF66",
-                color: "#0A0D0B",
-                boxShadow:
-                  "0 0 30px rgba(0,255,102,0.5), 0 0 60px rgba(0,255,102,0.2)",
-                transition: "box-shadow 0.3s ease",
+                background: theme.accent,
+                color: "#111111",
+                boxShadow: `0 0 30px rgba(${theme.rgb},0.5), 0 0 60px rgba(${theme.rgb},0.2)`,
+                transition: "box-shadow 0.3s ease, background 0.3s ease",
               }}
               whileHover={{
                 y: -3,
-                boxShadow:
-                  "0 0 45px rgba(0,255,102,0.7), 0 0 90px rgba(0,255,102,0.35)",
+                boxShadow: `0 0 45px rgba(${theme.rgb},0.7), 0 0 90px rgba(${theme.rgb},0.35)`,
                 transition: { type: "spring", stiffness: 280, damping: 18 },
               }}
               whileTap={{ scale: 0.96 }}
               data-ocid="hero.primary_button"
             >
-              Add to Discord
+              Add to Discord <ArrowRight size={16} />
             </motion.a>
 
             <motion.div
@@ -377,24 +389,24 @@ export default function Home() {
             >
               <Link
                 to="/commands"
-                className="block px-8 py-4 rounded-xl font-bold text-sm"
+                className="block px-6 py-3 rounded-xl font-bold text-sm"
                 style={{
                   background: "transparent",
-                  color: "#00FF66",
-                  border: "1px solid rgba(0,255,102,0.4)",
+                  color: theme.accent,
+                  border: `1px solid rgba(${theme.rgb},0.4)`,
                   transition: "background 0.25s ease, border-color 0.25s ease",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.background =
-                    "rgba(0,255,102,0.08)";
+                    `rgba(${theme.rgb},0.08)`;
                   (e.currentTarget as HTMLElement).style.borderColor =
-                    "rgba(0,255,102,0.65)";
+                    `rgba(${theme.rgb},0.65)`;
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLElement).style.background =
                     "transparent";
                   (e.currentTarget as HTMLElement).style.borderColor =
-                    "rgba(0,255,102,0.4)";
+                    `rgba(${theme.rgb},0.4)`;
                 }}
                 data-ocid="hero.secondary_button"
               >
@@ -404,67 +416,79 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
+        {/* Refined scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.6, duration: 0.6 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          style={{ zIndex: 10 }}
         >
-          <motion.span
-            animate={{ opacity: [0.4, 0.7, 0.4] }}
-            transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY }}
-            className="text-xs"
-            style={{ color: "rgba(169,183,174,0.5)" }}
-          >
-            Scroll
-          </motion.span>
           <motion.div
-            animate={{ scaleY: [0.4, 1, 0.4], opacity: [0.3, 0.7, 0.3] }}
+            className="flex flex-col items-center gap-1.5"
+            animate={{ y: [0, 5, 0] }}
             transition={{
-              duration: 2.5,
+              duration: 2.8,
               repeat: Number.POSITIVE_INFINITY,
               ease: "easeInOut",
             }}
-            style={{
-              width: 1,
-              height: 32,
-              background:
-                "linear-gradient(to bottom, rgba(0,255,102,0.6), transparent)",
-              transformOrigin: "top",
-            }}
-          />
+          >
+            <motion.span
+              animate={{ opacity: [0.35, 0.65, 0.35] }}
+              transition={{ duration: 2.5, repeat: Number.POSITIVE_INFINITY }}
+              className="text-xs tracking-widest uppercase"
+              style={{
+                color: "rgba(154,154,154,0.5)",
+                letterSpacing: "0.15em",
+              }}
+            >
+              Scroll
+            </motion.span>
+            <div
+              style={{
+                width: 1,
+                height: 36,
+                background: `linear-gradient(to bottom, rgba(${theme.rgb},0.7), transparent)`,
+                borderRadius: 1,
+              }}
+            />
+          </motion.div>
         </motion.div>
       </section>
 
+      {/* Section separator */}
+      <div className="px-6">
+        <div className="section-sep" />
+      </div>
+
       {/* Features */}
-      <section className="py-24 px-6" data-ocid="features.section">
+      <section className="py-16 px-6" data-ocid="features.section">
         <div className="max-w-6xl mx-auto">
           <motion.div
             variants={sectionContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
             <motion.p
               variants={sectionItem}
-              className="text-xs font-semibold tracking-widest uppercase mb-4"
-              style={{ color: "#00FF66" }}
+              className="text-xs font-semibold tracking-widest uppercase mb-4 label-glow"
+              style={{ color: theme.accent }}
             >
               Everything You Need
             </motion.p>
             <motion.h2
               variants={sectionItem}
-              className="font-black text-3xl md:text-5xl uppercase tracking-tight mb-4"
-              style={{ color: "#F2F6F3" }}
+              className="font-black text-2xl md:text-4xl mb-4"
+              style={{ color: "#F0F0F0", letterSpacing: "-0.03em" }}
             >
               Powerful Modules
             </motion.h2>
             <motion.p
               variants={sectionItem}
-              className="text-base max-w-xl mx-auto"
-              style={{ color: "#A9B7AE" }}
+              className="text-sm max-w-xl mx-auto"
+              style={{ color: "#9a9a9a" }}
             >
               Dracon packs enterprise-grade features into a clean, intuitive bot
               your entire team can use.
@@ -479,21 +503,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Section separator */}
+      <div className="px-6">
+        <div className="section-sep" />
+      </div>
+
       {/* Stats */}
-      <section className="py-20 px-6" data-ocid="stats.section">
+      <section className="py-14 px-6" data-ocid="stats.section">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="rounded-2xl p-12"
+            className="rounded-2xl p-8"
             style={{
-              background: "rgba(20,24,22,0.5)",
+              background: "rgba(34,34,34,0.5)",
               backdropFilter: "blur(12px)",
-              border: "1px solid rgba(120,255,200,0.12)",
-              boxShadow:
-                "0 0 60px rgba(0,255,102,0.06), inset 0 0 60px rgba(0,255,102,0.02)",
+              border: `1px solid rgba(${theme.rgb},0.12)`,
+              boxShadow: `0 0 60px rgba(${theme.rgb},0.06), inset 0 0 60px rgba(${theme.rgb},0.02)`,
             }}
           >
             <motion.div
@@ -501,19 +529,19 @@ export default function Home() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              className="text-center mb-12"
+              className="text-center mb-10"
             >
               <motion.p
                 variants={sectionItem}
-                className="text-xs font-semibold tracking-widest uppercase mb-3"
-                style={{ color: "#00FF66" }}
+                className="text-xs font-semibold tracking-widest uppercase mb-3 label-glow"
+                style={{ color: theme.accent }}
               >
                 By The Numbers
               </motion.p>
               <motion.h2
                 variants={sectionItem}
-                className="font-black text-3xl md:text-4xl uppercase"
-                style={{ color: "#F2F6F3" }}
+                className="font-black text-2xl md:text-4xl"
+                style={{ color: "#F0F0F0", letterSpacing: "-0.03em" }}
               >
                 Stats
               </motion.h2>
@@ -547,22 +575,22 @@ export default function Home() {
                     >
                       <Icon
                         size={20}
-                        style={{ color: "rgba(0,255,102,0.7)" }}
+                        style={{ color: `rgba(${theme.rgb},0.7)` }}
                       />
                     </motion.div>
                     <div
-                      className="font-black text-5xl md:text-6xl mb-2"
-                      style={{
-                        color: "#00FF66",
-                        textShadow:
-                          "0 0 30px rgba(0,255,102,0.6), 0 0 60px rgba(0,255,102,0.3)",
-                      }}
+                      className="stat-gradient-text font-black text-4xl md:text-5xl mb-2"
+                      style={
+                        {
+                          "--dracon-accent": theme.accent,
+                        } as React.CSSProperties
+                      }
                     >
                       {stat.value}
                     </div>
                     <div
-                      className="text-sm font-medium uppercase tracking-wider"
-                      style={{ color: "#A9B7AE" }}
+                      className="text-sm font-medium"
+                      style={{ color: "#9a9a9a" }}
                     >
                       {stat.label}
                     </div>
@@ -574,8 +602,13 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Section separator */}
+      <div className="px-6">
+        <div className="section-sep" />
+      </div>
+
       {/* CTA Banner */}
-      <section className="py-20 px-6">
+      <section className="py-14 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             variants={sectionContainer}
@@ -585,15 +618,15 @@ export default function Home() {
           >
             <motion.h2
               variants={sectionItem}
-              className="font-black text-3xl md:text-5xl uppercase tracking-tight mb-4"
-              style={{ color: "#F2F6F3" }}
+              className="font-black text-2xl md:text-4xl mb-4"
+              style={{ color: "#F0F0F0", letterSpacing: "-0.03em" }}
             >
               Ready to Take Control?
             </motion.h2>
             <motion.p
               variants={sectionItem}
-              className="text-base mb-8"
-              style={{ color: "#A9B7AE" }}
+              className="text-sm mb-8"
+              style={{ color: "#9a9a9a" }}
             >
               Join 500+ servers already using Dracon to protect and manage their
               communities.
@@ -603,18 +636,16 @@ export default function Home() {
                 href="https://discord.com/oauth2/authorize"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-10 py-4 rounded-xl font-bold text-sm"
+                className="shimmer-btn inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-sm"
                 style={{
-                  background: "#00FF66",
-                  color: "#0A0D0B",
-                  boxShadow:
-                    "0 0 30px rgba(0,255,102,0.5), 0 0 60px rgba(0,255,102,0.2)",
-                  transition: "box-shadow 0.3s ease",
+                  background: theme.accent,
+                  color: "#111111",
+                  boxShadow: `0 0 30px rgba(${theme.rgb},0.5), 0 0 60px rgba(${theme.rgb},0.2)`,
+                  transition: "box-shadow 0.3s ease, background 0.3s ease",
                 }}
                 whileHover={{
                   y: -3,
-                  boxShadow:
-                    "0 0 45px rgba(0,255,102,0.7), 0 0 90px rgba(0,255,102,0.35)",
+                  boxShadow: `0 0 45px rgba(${theme.rgb},0.7), 0 0 90px rgba(${theme.rgb},0.35)`,
                   transition: { type: "spring", stiffness: 280, damping: 18 },
                 }}
                 whileTap={{ scale: 0.96 }}

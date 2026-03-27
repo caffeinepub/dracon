@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { SiDiscord, SiGithub, SiX } from "react-icons/si";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Footer() {
+  const { theme } = useTheme();
   const year = new Date().getFullYear();
   const hostname =
     typeof window !== "undefined" ? window.location.hostname : "dracon.bot";
@@ -10,10 +12,10 @@ export default function Footer() {
     <footer
       className="mt-20"
       style={{
-        background: "rgba(14, 20, 17, 0.8)",
+        background: "rgba(22, 22, 22, 0.85)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderTop: "1px solid rgba(120,255,200,0.1)",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -23,16 +25,11 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-3">
               <span
                 className="w-3 h-3 rounded-full animate-pulse-glow"
-                style={{ backgroundColor: "#00FF66", flexShrink: 0 }}
+                style={{ backgroundColor: theme.accent, flexShrink: 0 }}
               />
-              <span
-                className="font-black text-lg tracking-widest"
-                style={{ color: "#F2F6F3", letterSpacing: "0.15em" }}
-              >
-                DRACON
-              </span>
+              <span className="font-black text-lg">Dracon</span>
             </div>
-            <p className="text-sm" style={{ color: "#A9B7AE" }}>
+            <p className="text-sm" style={{ color: "#9a9a9a" }}>
               The ultimate Discord bot for complete server control.
             </p>
             <div className="flex items-center gap-3 mt-4">
@@ -41,12 +38,12 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg transition-all duration-200"
-                style={{ color: "#A9B7AE", background: "rgba(30,36,33,0.6)" }}
+                style={{ color: "#9a9a9a", background: "rgba(40,40,40,0.6)" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#00FF66";
+                  (e.currentTarget as HTMLElement).style.color = theme.accent;
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                  (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
                 }}
               >
                 <SiDiscord size={16} />
@@ -56,12 +53,12 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg transition-all duration-200"
-                style={{ color: "#A9B7AE", background: "rgba(30,36,33,0.6)" }}
+                style={{ color: "#9a9a9a", background: "rgba(40,40,40,0.6)" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#00FF66";
+                  (e.currentTarget as HTMLElement).style.color = theme.accent;
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                  (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
                 }}
               >
                 <SiGithub size={16} />
@@ -71,12 +68,12 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg transition-all duration-200"
-                style={{ color: "#A9B7AE", background: "rgba(30,36,33,0.6)" }}
+                style={{ color: "#9a9a9a", background: "rgba(40,40,40,0.6)" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#00FF66";
+                  (e.currentTarget as HTMLElement).style.color = theme.accent;
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                  (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
                 }}
               >
                 <SiX size={16} />
@@ -87,8 +84,8 @@ export default function Footer() {
           {/* Resources */}
           <div>
             <h4
-              className="text-xs font-semibold tracking-widest uppercase mb-4"
-              style={{ color: "#00FF66" }}
+              className="text-xs font-semibold tracking-widest mb-4"
+              style={{ color: theme.accent }}
             >
               Resources
             </h4>
@@ -102,12 +99,12 @@ export default function Footer() {
                   <Link
                     to={l.to}
                     className="text-sm transition-colors duration-200"
-                    style={{ color: "#A9B7AE" }}
+                    style={{ color: "#9a9a9a" }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = "#F2F6F3";
+                      (e.currentTarget as HTMLElement).style.color = "#F0F0F0";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                      (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
                     }}
                     data-ocid="nav.link"
                   >
@@ -121,8 +118,8 @@ export default function Footer() {
           {/* Community */}
           <div>
             <h4
-              className="text-xs font-semibold tracking-widest uppercase mb-4"
-              style={{ color: "#00FF66" }}
+              className="text-xs font-semibold tracking-widest mb-4"
+              style={{ color: theme.accent }}
             >
               Community
             </h4>
@@ -139,14 +136,14 @@ export default function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm transition-colors duration-200"
-                      style={{ color: "#A9B7AE" }}
+                      style={{ color: "#9a9a9a" }}
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLElement).style.color =
-                          "#F2F6F3";
+                          "#F0F0F0";
                       }}
                       onMouseLeave={(e) => {
                         (e.currentTarget as HTMLElement).style.color =
-                          "#A9B7AE";
+                          "#9a9a9a";
                       }}
                     >
                       {l.label}
@@ -155,14 +152,14 @@ export default function Footer() {
                     <Link
                       to={l.to!}
                       className="text-sm transition-colors duration-200"
-                      style={{ color: "#A9B7AE" }}
+                      style={{ color: "#9a9a9a" }}
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLElement).style.color =
-                          "#F2F6F3";
+                          "#F0F0F0";
                       }}
                       onMouseLeave={(e) => {
                         (e.currentTarget as HTMLElement).style.color =
-                          "#A9B7AE";
+                          "#9a9a9a";
                       }}
                       data-ocid="nav.link"
                     >
@@ -177,8 +174,8 @@ export default function Footer() {
           {/* Legal */}
           <div>
             <h4
-              className="text-xs font-semibold tracking-widest uppercase mb-4"
-              style={{ color: "#00FF66" }}
+              className="text-xs font-semibold tracking-widest mb-4"
+              style={{ color: theme.accent }}
             >
               Legal
             </h4>
@@ -191,12 +188,12 @@ export default function Footer() {
                   <Link
                     to={l.to}
                     className="text-sm transition-colors duration-200"
-                    style={{ color: "#A9B7AE" }}
+                    style={{ color: "#9a9a9a" }}
                     onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = "#F2F6F3";
+                      (e.currentTarget as HTMLElement).style.color = "#F0F0F0";
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                      (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
                     }}
                     data-ocid="nav.link"
                   >
@@ -210,24 +207,24 @@ export default function Footer() {
 
         <div
           className="mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ borderTop: "1px solid rgba(120,255,200,0.08)" }}
+          style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
         >
-          <p className="text-xs" style={{ color: "#A9B7AE" }}>
-            © {year} DRACON. All rights reserved.
+          <p className="text-xs" style={{ color: "#9a9a9a" }}>
+            © {year} Dracon. All rights reserved.
           </p>
-          <p className="text-xs" style={{ color: "#A9B7AE" }}>
-            Built with <span style={{ color: "#00FF66" }}>♥</span> using{" "}
+          <p className="text-xs" style={{ color: "#9a9a9a" }}>
+            Built with <span style={{ color: theme.accent }}>♥</span> using{" "}
             <a
               href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(hostname)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors duration-200"
-              style={{ color: "#A9B7AE" }}
+              style={{ color: "#9a9a9a" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "#00FF66";
+                (e.currentTarget as HTMLElement).style.color = theme.accent;
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "#A9B7AE";
+                (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
               }}
             >
               caffeine.ai

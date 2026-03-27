@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useTheme } from "../context/ThemeContext";
 
 const sections = [
   {
@@ -13,18 +14,7 @@ const sections = [
   },
   {
     title: "3. Permitted Use",
-    content: `You may use Dracon for:
-
-• Managing and moderating your Discord server.
-• Automating welcome messages, role assignments, and moderation actions.
-• Protecting your community with Antinuke and verification features.
-
-You may NOT use Dracon to:
-
-• Violate Discord's Terms of Service or Community Guidelines.
-• Harass, abuse, or harm other users.
-• Distribute spam, malware, or illegal content.
-• Circumvent security measures or attempt unauthorized access.`,
+    content: `You may use Dracon for:\n\n• Managing and moderating your Discord server.\n• Automating welcome messages, role assignments, and moderation actions.\n• Protecting your community with Antinuke and verification features.\n\nYou may NOT use Dracon to:\n\n• Violate Discord's Terms of Service or Community Guidelines.\n• Harass, abuse, or harm other users.\n• Distribute spam, malware, or illegal content.\n• Circumvent security measures or attempt unauthorized access.`,
   },
   {
     title: "4. Premium Services",
@@ -59,10 +49,12 @@ You may NOT use Dracon to:
 ];
 
 export default function Terms() {
+  const { theme } = useTheme();
+
   return (
     <div
       style={{
-        backgroundColor: "#0A0D0B",
+        backgroundColor: "#191919",
         minHeight: "100vh",
         paddingTop: "100px",
       }}
@@ -76,17 +68,17 @@ export default function Terms() {
         >
           <p
             className="text-xs font-semibold tracking-widest uppercase mb-3"
-            style={{ color: "#00FF66" }}
+            style={{ color: theme.accent }}
           >
             Legal
           </p>
           <h1
-            className="font-black text-4xl md:text-6xl uppercase tracking-tight mb-4"
-            style={{ color: "#F2F6F3" }}
+            className="font-black text-4xl md:text-6xl tracking-tight mb-4"
+            style={{ color: "#F0F0F0" }}
           >
             Terms of Service
           </h1>
-          <p style={{ color: "#A9B7AE" }}>Last updated: March 2026</p>
+          <p style={{ color: "#9a9a9a" }}>Last updated: March 2026</p>
         </motion.div>
 
         <motion.div
@@ -95,11 +87,11 @@ export default function Terms() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="p-4 rounded-xl mb-10"
           style={{
-            background: "rgba(0,255,102,0.06)",
-            border: "1px solid rgba(0,255,102,0.2)",
+            background: `rgba(${theme.rgb},0.05)`,
+            border: `1px solid rgba(${theme.rgb},0.15)`,
           }}
         >
-          <p className="text-sm" style={{ color: "#A9B7AE" }}>
+          <p className="text-sm" style={{ color: "#9a9a9a" }}>
             Please read these Terms of Service carefully. By using Dracon, you
             agree to be legally bound by these terms.
           </p>
@@ -116,13 +108,13 @@ export default function Terms() {
             >
               <h2
                 className="font-bold text-lg mb-3"
-                style={{ color: "#00FF66" }}
+                style={{ color: theme.accent }}
               >
                 {section.title}
               </h2>
               <p
                 className="text-sm leading-relaxed whitespace-pre-line"
-                style={{ color: "#A9B7AE" }}
+                style={{ color: "#9a9a9a" }}
               >
                 {section.content}
               </p>
