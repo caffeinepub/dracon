@@ -15,14 +15,11 @@ import {
   Wrench,
 } from "lucide-react";
 import type { Transition } from "motion/react";
-import { AnimatePresence, type Variants, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { type Variants, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 
 const EASE: Transition["ease"] = [0.16, 1, 0.3, 1] as const;
-
-const CYCLING_WORDS = ["Control", "Protect", "Manage", "Secure", "Automate"];
-const BRAND_WORDS = ["Dracon", "Convenience", "Security", "Automation"];
 
 const features = [
   {
@@ -129,26 +126,13 @@ const sectionItem: Variants = {
   },
 };
 
-const wordVariants: Variants = {
-  enter: { y: 40, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
-  },
-  exit: {
-    y: -40,
-    opacity: 0,
-    transition: { duration: 0.35, ease: [0.4, 0, 1, 1] },
-  },
-};
-
 function FeatureCard({
   feature,
   index,
 }: { feature: (typeof features)[0]; index: number }) {
   const Icon = feature.icon;
   const { theme } = useTheme();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 32 }}
@@ -224,55 +208,72 @@ function FeatureCard({
 
 export default function Home() {
   const { theme } = useTheme();
-  const [wordIndex, setWordIndex] = useState(0);
-  const [brandIndex, setBrandIndex] = useState(0);
-  const [typedBrand, setTypedBrand] = useState(BRAND_WORDS[0]);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [charPos, setCharPos] = useState(BRAND_WORDS[0].length);
+
+  const WORDS = ["Dracon", "Convenience", "Security", "Automation"];
+  const [displayText, setDisplayText] = useState("Dracon");
+  const [showCursor, setShowCursor] = useState(true);
+  const wordIndex = useRef(0);
+  const charIndex = useRef(5); // "Dracon".length
+  const phase = useRef<"pause" | "erase" | "type">("pause");
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const PAUSE_MS = 1500;
+    const TYPE_MS = 80;
+    const ERASE_MS = 50;
+
+    function tick() {
+      const currentWord = WORDS[wordIndex.current];
+      const nextWordIdx = (wordIndex.current + 1) % WORDS.length;
+      const nextWord = WORDS[nextWordIdx];
+
+      if (phase.current === "pause") {
+        phase.current = "erase";
+        charIndex.current = currentWord.length;
+        timer.current = setTimeout(tick, PAUSE_MS);
+      } else if (phase.current === "erase") {
+        if (charIndex.current > 0) {
+          charIndex.current--;
+          setDisplayText(currentWord.slice(0, charIndex.current));
+          timer.current = setTimeout(tick, ERASE_MS);
+        } else {
+          wordIndex.current = nextWordIdx;
+          phase.current = "type";
+          charIndex.current = 0;
+          timer.current = setTimeout(tick, TYPE_MS);
+        }
+      } else {
+        if (charIndex.current < nextWord.length) {
+          charIndex.current++;
+          setDisplayText(nextWord.slice(0, charIndex.current));
+          timer.current = setTimeout(tick, TYPE_MS);
+        } else {
+          phase.current = "pause";
+          timer.current = setTimeout(tick, PAUSE_MS);
+        }
+      }
+    }
+
+    timer.current = setTimeout(tick, PAUSE_MS);
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const blink = setInterval(() => setShowCursor((c) => !c), 530);
+    return () => clearInterval(blink);
+  }, []);
 
   useEffect(() => {
     document.title = "Dracon — Control Your Server";
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % CYCLING_WORDS.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const target = BRAND_WORDS[brandIndex];
-    if (!isDeleting && charPos < target.length) {
-      const t = setTimeout(() => {
-        setTypedBrand(target.slice(0, charPos + 1));
-        setCharPos(charPos + 1);
-      }, 60);
-      return () => clearTimeout(t);
-    }
-    if (!isDeleting && charPos === target.length) {
-      const t = setTimeout(() => setIsDeleting(true), 1200);
-      return () => clearTimeout(t);
-    }
-    if (isDeleting && charPos > 0) {
-      const t = setTimeout(() => {
-        setTypedBrand(target.slice(0, charPos - 1));
-        setCharPos(charPos - 1);
-      }, 40);
-      return () => clearTimeout(t);
-    }
-    if (isDeleting && charPos === 0) {
-      const next = (brandIndex + 1) % BRAND_WORDS.length;
-      setBrandIndex(next);
-      setIsDeleting(false);
-    }
-  }, [brandIndex, isDeleting, charPos]);
-
   return (
     <div style={{ backgroundColor: "#191919" }}>
       {/* Hero */}
       <section
-        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 hero-dot-grid"
+        className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-14 hero-dot-grid"
         style={{ overflow: "hidden" }}
       >
         {/* Ambient radial glow */}
@@ -353,7 +354,7 @@ export default function Home() {
         >
           <motion.div variants={heroItem}>
             <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 animate-badge-pulse"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 animate-badge-pulse"
               style={{
                 background: `rgba(${theme.rgb},0.08)`,
                 border: `1px solid rgba(${theme.rgb},0.25)`,
@@ -376,49 +377,18 @@ export default function Home() {
 
           <motion.h1
             variants={heroItem}
-            className="font-black leading-none mb-5"
+            className="font-black leading-none mb-4"
             style={{
               color: "#F0F0F0",
               fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
               letterSpacing: "-0.04em",
             }}
           >
-            {/* Cycling word container */}
-            <span
-              className="inline-flex items-center justify-center"
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                verticalAlign: "bottom",
-                minWidth: "8ch",
-                height: "1.15em",
-                display: "inline-block",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={CYCLING_WORDS[wordIndex]}
-                  variants={wordVariants}
-                  initial="enter"
-                  animate="visible"
-                  exit="exit"
-                  style={{
-                    color: theme.accent,
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    display: "inline-block",
-                    textAlign: "center",
-                  }}
-                >
-                  {CYCLING_WORDS[wordIndex]}
-                </motion.span>
-              </AnimatePresence>
-            </span>{" "}
-            Your Server
+            Control Your Server
             <br />
             with{" "}
             <span
+              key={theme.key}
               style={{
                 background: `linear-gradient(135deg, ${theme.accent} 0%, #ffffff 80%)`,
                 WebkitBackgroundClip: "text",
@@ -426,23 +396,16 @@ export default function Home() {
                 backgroundClip: "text",
                 display: "inline-block",
                 paddingBottom: "0.05em",
-                position: "relative",
               }}
             >
-              {typedBrand}
+              {displayText}
               <span
                 style={{
-                  WebkitTextFillColor: theme.accent,
-                  opacity:
-                    charPos < BRAND_WORDS[brandIndex].length || isDeleting
-                      ? 1
-                      : Math.sin(Date.now() / 300) > 0
-                        ? 1
-                        : 0,
-                  animation:
-                    !isDeleting && charPos === BRAND_WORDS[brandIndex].length
-                      ? "blink 0.7s step-end infinite"
-                      : "none",
+                  WebkitTextFillColor: showCursor
+                    ? theme.accent
+                    : "transparent",
+                  marginLeft: "2px",
+                  fontWeight: 400,
                 }}
               >
                 |
@@ -452,7 +415,7 @@ export default function Home() {
 
           <motion.p
             variants={heroItem}
-            className="text-base md:text-lg mb-8 max-w-2xl mx-auto"
+            className="text-base md:text-lg mb-6 max-w-2xl mx-auto"
             style={{ color: "#9a9a9a", lineHeight: 1.6 }}
           >
             The most powerful Discord bot for complete server control. Featuring{" "}
@@ -569,25 +532,25 @@ export default function Home() {
       </div>
 
       {/* Features */}
-      <section className="py-16 px-6" data-ocid="features.section">
+      <section className="py-12 px-6" data-ocid="features.section">
         <div className="max-w-6xl mx-auto">
           <motion.div
             variants={sectionContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
-            className="text-center mb-12"
+            className="text-center mb-10"
           >
             <motion.p
               variants={sectionItem}
-              className="text-xs font-semibold tracking-widest uppercase mb-4 label-glow"
+              className="text-xs font-semibold tracking-widest uppercase mb-3 label-glow"
               style={{ color: theme.accent }}
             >
               Everything You Need
             </motion.p>
             <motion.h2
               variants={sectionItem}
-              className="font-black text-2xl md:text-4xl mb-4"
+              className="font-black text-2xl md:text-4xl mb-3"
               style={{ color: "#F0F0F0", letterSpacing: "-0.03em" }}
             >
               Powerful Modules
@@ -616,7 +579,7 @@ export default function Home() {
       </div>
 
       {/* Stats */}
-      <section className="py-16 px-6" data-ocid="stats.section">
+      <section className="py-12 px-6" data-ocid="stats.section">
         <div className="max-w-5xl mx-auto">
           {/* Heading */}
           <motion.div
@@ -624,18 +587,18 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
-            className="text-center mb-12"
+            className="text-center mb-10"
           >
             <motion.p
               variants={sectionItem}
-              className="text-xs font-semibold tracking-widest uppercase mb-4 label-glow"
+              className="text-xs font-semibold tracking-widest uppercase mb-3 label-glow"
               style={{ color: theme.accent }}
             >
               By The Numbers
             </motion.p>
             <motion.h2
               variants={sectionItem}
-              className="font-black text-2xl md:text-4xl mb-4"
+              className="font-black text-2xl md:text-4xl mb-3"
               style={{ color: "#F0F0F0", letterSpacing: "-0.03em" }}
             >
               Trusted by <span style={{ color: theme.accent }}>500+</span>{" "}
@@ -727,7 +690,7 @@ export default function Home() {
       </div>
 
       {/* CTA Banner */}
-      <section className="py-14 px-6">
+      <section className="py-12 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             variants={sectionContainer}
@@ -744,7 +707,7 @@ export default function Home() {
             </motion.h2>
             <motion.p
               variants={sectionItem}
-              className="text-sm mb-8"
+              className="text-sm mb-6"
               style={{ color: "#9a9a9a" }}
             >
               Join 500+ servers already using Dracon to protect and manage their

@@ -5,8 +5,6 @@ import { useTheme } from "../context/ThemeContext";
 export default function Footer() {
   const { theme } = useTheme();
   const year = new Date().getFullYear();
-  const hostname =
-    typeof window !== "undefined" ? window.location.hostname : "dracon.bot";
 
   return (
     <footer
@@ -213,22 +211,8 @@ export default function Footer() {
             © {year} Dracon. All rights reserved.
           </p>
           <p className="text-xs" style={{ color: "#9a9a9a" }}>
-            Built with <span style={{ color: theme.accent }}>♥</span> using{" "}
-            <a
-              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(hostname)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors duration-200"
-              style={{ color: "#9a9a9a" }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = theme.accent;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "#9a9a9a";
-              }}
-            >
-              caffeine.ai
-            </a>
+            Built with <span style={{ color: theme.accent }}>♥</span> by{" "}
+            <span style={{ color: "#9a9a9a" }}>Dracon Team</span>
           </p>
         </div>
       </div>
