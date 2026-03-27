@@ -73,7 +73,7 @@
   }
 
   html {
-    font-size: 88%;
+    font-size: 82%;
     color-scheme: dark;
     scroll-behavior: smooth;
   }
@@ -201,14 +201,6 @@
     );
     max-width: 800px;
     margin: 0 auto;
-  }
-
-  /* Gradient text for stat numbers */
-  .stat-gradient-text {
-    background: linear-gradient(135deg, var(--dracon-accent) 0%, #ffffff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   /* Section label glow */
@@ -389,5 +381,15 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
   }
 }

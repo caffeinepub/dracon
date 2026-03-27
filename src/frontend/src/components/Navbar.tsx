@@ -1,5 +1,17 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { ChevronDown, Menu, Palette, X, Zap } from "lucide-react";
+import {
+  ChevronDown,
+  FileText,
+  Home,
+  Mail,
+  Menu,
+  MessageCircle,
+  Palette,
+  Shield,
+  Terminal,
+  X,
+  Zap,
+} from "lucide-react";
 import type { Transition } from "motion/react";
 import { AnimatePresence, type Variants, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -8,13 +20,35 @@ import { type ThemeKey, useTheme } from "../context/ThemeContext";
 const EASE: Transition["ease"] = [0.16, 1, 0.3, 1] as const;
 
 const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Commands", to: "/commands" },
-  { label: "Support", to: "/support" },
-  { label: "Privacy Policy", to: "/privacy" },
-  { label: "Terms of Service", to: "/terms" },
+  { label: "Home", desc: "Go to landing page", icon: Home, to: "/" },
+  {
+    label: "Commands",
+    desc: "Browse bot features",
+    icon: Terminal,
+    to: "/commands",
+  },
+  {
+    label: "Support",
+    desc: "Get help from us",
+    icon: MessageCircle,
+    to: "/support",
+  },
+  {
+    label: "Privacy Policy",
+    desc: "Your data protection",
+    icon: Shield,
+    to: "/privacy",
+  },
+  {
+    label: "Terms of Service",
+    desc: "Read our terms",
+    icon: FileText,
+    to: "/terms",
+  },
   {
     label: "Invite",
+    desc: "Add to your server",
+    icon: Mail,
     to: "https://discord.com/oauth2/authorize",
     external: true,
   },
@@ -72,7 +106,6 @@ function ThemePicker({ inline = false }: { inline?: boolean }) {
   }, []);
 
   if (inline) {
-    // Flat inline version for mobile
     return (
       <div
         className="flex items-center gap-2 px-4 py-2"
@@ -258,6 +291,91 @@ export default function Navbar() {
 
   const currentPath = router.state.location.pathname;
 
+  const renderDropdownItem = (link: (typeof navLinks)[number], i: number) => {
+    const Icon = link.icon;
+    const isActive = !link.external && currentPath === link.to;
+
+    const innerContent = (
+      <>
+        <span
+          className="flex items-center justify-center rounded-md flex-shrink-0"
+          style={{
+            width: 28,
+            height: 28,
+            background: "rgba(255,255,255,0.05)",
+          }}
+        >
+          <Icon size={13} />
+        </span>
+        <span className="flex flex-col min-w-0">
+          <span className="text-sm font-medium leading-tight">
+            {link.label}
+          </span>
+          <span
+            className="text-xs leading-tight mt-0.5"
+            style={{ color: "#5a5a5a" }}
+          >
+            {link.desc}
+          </span>
+        </span>
+      </>
+    );
+
+    const sharedStyle = {
+      color: isActive ? theme.accent : "#9a9a9a",
+      transition: "color 0.2s ease, background 0.2s ease",
+    };
+
+    const hoverIn = (el: HTMLElement) => {
+      el.style.color = theme.accent;
+      el.style.background = `rgba(${theme.rgb},0.08)`;
+    };
+    const hoverOut = (el: HTMLElement) => {
+      el.style.color = isActive ? theme.accent : "#9a9a9a";
+      el.style.background = "transparent";
+    };
+
+    return link.external ? (
+      <motion.a
+        key={link.label}
+        initial={{ opacity: 0, x: -6 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.2, delay: i * 0.04, ease: EASE }}
+        href={link.to}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => setDropdownOpen(false)}
+        className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg"
+        style={sharedStyle}
+        whileHover={{ x: 3, transition: { duration: 0.15 } }}
+        onMouseEnter={(e) => hoverIn(e.currentTarget as HTMLElement)}
+        onMouseLeave={(e) => hoverOut(e.currentTarget as HTMLElement)}
+      >
+        {innerContent}
+      </motion.a>
+    ) : (
+      <motion.div
+        key={link.label}
+        initial={{ opacity: 0, x: -6 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.2, delay: i * 0.04, ease: EASE }}
+        whileHover={{ x: 3, transition: { duration: 0.15 } }}
+      >
+        <Link
+          to={link.to}
+          onClick={() => setDropdownOpen(false)}
+          className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg"
+          style={sharedStyle}
+          onMouseEnter={(e) => hoverIn(e.currentTarget as HTMLElement)}
+          onMouseLeave={(e) => hoverOut(e.currentTarget as HTMLElement)}
+          data-ocid="nav.link"
+        >
+          {innerContent}
+        </Link>
+      </motion.div>
+    );
+  };
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 px-4 py-3"
@@ -325,7 +443,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -6, scale: 0.96 }}
                   transition={{ duration: 0.22, ease: EASE }}
-                  className="absolute top-full left-1/2 mt-3 w-52 rounded-xl overflow-hidden"
+                  className="absolute top-full left-1/2 mt-3 w-60 rounded-xl overflow-hidden"
                   style={{
                     transform: "translateX(-50%)",
                     background: "rgba(22, 22, 22, 0.97)",
@@ -336,95 +454,7 @@ export default function Navbar() {
                   }}
                 >
                   <div className="p-2">
-                    {navLinks.map((link, i) =>
-                      link.external ? (
-                        <motion.a
-                          key={link.label}
-                          initial={{ opacity: 0, x: -6 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{
-                            duration: 0.2,
-                            delay: i * 0.04,
-                            ease: EASE,
-                          }}
-                          href={link.to}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium"
-                          style={{
-                            color: "#9a9a9a",
-                            transition: "color 0.2s ease, background 0.2s ease",
-                          }}
-                          whileHover={{
-                            x: 3,
-                            transition: { duration: 0.15 },
-                          }}
-                          onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.color =
-                              theme.accent;
-                            (e.currentTarget as HTMLElement).style.background =
-                              `rgba(${theme.rgb},0.08)`;
-                          }}
-                          onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.color =
-                              "#9a9a9a";
-                            (e.currentTarget as HTMLElement).style.background =
-                              "transparent";
-                          }}
-                        >
-                          {link.label}
-                        </motion.a>
-                      ) : (
-                        <motion.div
-                          key={link.label}
-                          initial={{ opacity: 0, x: -6 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{
-                            duration: 0.2,
-                            delay: i * 0.04,
-                            ease: EASE,
-                          }}
-                          whileHover={{
-                            x: 3,
-                            transition: { duration: 0.15 },
-                          }}
-                        >
-                          <Link
-                            to={link.to}
-                            onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium"
-                            style={{
-                              color:
-                                currentPath === link.to
-                                  ? theme.accent
-                                  : "#9a9a9a",
-                              transition:
-                                "color 0.2s ease, background 0.2s ease",
-                            }}
-                            onMouseEnter={(e) => {
-                              (e.currentTarget as HTMLElement).style.color =
-                                theme.accent;
-                              (
-                                e.currentTarget as HTMLElement
-                              ).style.background = `rgba(${theme.rgb},0.08)`;
-                            }}
-                            onMouseLeave={(e) => {
-                              (e.currentTarget as HTMLElement).style.color =
-                                currentPath === link.to
-                                  ? theme.accent
-                                  : "#9a9a9a";
-                              (
-                                e.currentTarget as HTMLElement
-                              ).style.background = "transparent";
-                            }}
-                            data-ocid="nav.link"
-                          >
-                            {link.label}
-                          </Link>
-                        </motion.div>
-                      ),
-                    )}
+                    {navLinks.map((link, i) => renderDropdownItem(link, i))}
                   </div>
                 </motion.div>
               )}
@@ -567,8 +597,9 @@ export default function Navbar() {
             }}
           >
             <div className="flex flex-col gap-1">
-              {navLinks.map((link) =>
-                link.external ? (
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                return link.external ? (
                   <motion.a
                     key={link.label}
                     variants={mobileItemVariants}
@@ -576,7 +607,7 @@ export default function Navbar() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileOpen(false)}
-                    className="px-4 py-3 rounded-xl text-sm font-medium"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
                     style={{
                       color: "#9a9a9a",
                       transition: "color 0.2s ease, background 0.2s ease",
@@ -593,14 +624,20 @@ export default function Navbar() {
                         "transparent";
                     }}
                   >
-                    {link.label}
+                    <Icon size={15} style={{ flexShrink: 0 }} />
+                    <span className="flex flex-col">
+                      <span>{link.label}</span>
+                      <span style={{ fontSize: 11, color: "#5a5a5a" }}>
+                        {link.desc}
+                      </span>
+                    </span>
                   </motion.a>
                 ) : (
                   <motion.div key={link.label} variants={mobileItemVariants}>
                     <Link
                       to={link.to}
                       onClick={() => setMobileOpen(false)}
-                      className="block px-4 py-3 rounded-xl text-sm font-medium"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
                       style={{
                         color:
                           currentPath === link.to ? theme.accent : "#9a9a9a",
@@ -616,11 +653,17 @@ export default function Navbar() {
                       }}
                       data-ocid="nav.link"
                     >
-                      {link.label}
+                      <Icon size={15} style={{ flexShrink: 0 }} />
+                      <span className="flex flex-col">
+                        <span>{link.label}</span>
+                        <span style={{ fontSize: 11, color: "#5a5a5a" }}>
+                          {link.desc}
+                        </span>
+                      </span>
                     </Link>
                   </motion.div>
-                ),
-              )}
+                );
+              })}
               <motion.div variants={mobileItemVariants}>
                 <Link
                   to="/partners"
