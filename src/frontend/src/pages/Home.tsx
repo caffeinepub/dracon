@@ -323,7 +323,7 @@ export default function Home() {
             className="font-black leading-none mb-5"
             style={{
               color: "#F0F0F0",
-              fontSize: "clamp(2.5rem, 8vw, 6rem)",
+              fontSize: "clamp(1.6rem, 4.5vw, 3rem)",
               letterSpacing: "-0.04em",
             }}
           >
@@ -336,7 +336,8 @@ export default function Home() {
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
-                filter: `drop-shadow(0 0 24px rgba(${theme.rgb},0.6)) drop-shadow(0 0 48px rgba(${theme.rgb},0.3))`,
+                display: "inline-block",
+                paddingBottom: "0.05em",
               }}
             >
               Dracon

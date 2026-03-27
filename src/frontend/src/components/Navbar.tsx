@@ -1,5 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { ChevronDown, Menu, X, Zap } from "lucide-react";
+import { ChevronDown, Menu, Palette, X, Zap } from "lucide-react";
 import type { Transition } from "motion/react";
 import { AnimatePresence, type Variants, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -78,7 +78,10 @@ function ThemePicker({ inline = false }: { inline?: boolean }) {
         className="flex items-center gap-2 px-4 py-2"
         style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
       >
-        <span style={{ fontSize: 14, marginRight: 4 }}>🎨</span>
+        <Palette
+          size={14}
+          style={{ color: "#9a9a9a", marginRight: 4, flexShrink: 0 }}
+        />
         {THEME_OPTIONS.map((opt) => (
           <button
             key={opt.key}
@@ -146,7 +149,7 @@ function ThemePicker({ inline = false }: { inline?: boolean }) {
         }}
         data-ocid="nav.toggle"
       >
-        🎨
+        <Palette size={16} style={{ color: "#9a9a9a" }} />
       </motion.button>
 
       <AnimatePresence>
